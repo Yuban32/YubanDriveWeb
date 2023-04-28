@@ -1,0 +1,7 @@
+html.dark {
+    /* 自定义深色背景颜色 */
+    --el-border-color-lighter: #46464b;
+}
+html.light{
+    --el-border-color-lighter: #ffffff;
+}
