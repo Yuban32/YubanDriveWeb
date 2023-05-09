@@ -9,7 +9,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    copy: typeof import('./src/components/FileMenu/FileMenu copy.vue')['default']
+    copy: typeof import('./src/components/FileDownload copy.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
     ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']
@@ -45,6 +45,8 @@ declare module '@vue/runtime-core' {
     ElText: typeof import('element-plus/es')['ElText']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     File: typeof import('./src/components/File.vue')['default']
+    FileDownload: typeof import('./src/components/FileDownload.vue')['default']
+    FileDownloadPane: typeof import('./src/components/FileDownloadPane.vue')['default']
     FileMenu: typeof import('./src/components/FileMenu/FileMenu.vue')['default']
     FileMenuCopy: typeof import('./src/components/FileMenu/FileMenuCopy.vue')['default']
     FileRecycle: typeof import('./src/components/FileRecycle.vue')['default']
@@ -55,5 +57,6 @@ declare module '@vue/runtime-core' {
     Message: typeof import('./src/components/message/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    TaskQueue: typeof import('./src/components/TaskQueue.vue')['default']
   }
 }

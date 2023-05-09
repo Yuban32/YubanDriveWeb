@@ -20,6 +20,7 @@ export class IUserData implements UserData{
 }
 
 export interface FileListDTO{
+    [key: string]: any;
     type:String,
     category:String,
     name:String,
@@ -42,4 +43,11 @@ export interface FileUploadType{
     chunkList:any
     file:any
     uploadingStop:boolean
+}
+export interface FileDonwloadType{
+    downloadingStop:boolean,
+    downloadSpeed:string,
+    downloadPersentage:number,
+    blobList:[],
+    chunkList:[]
 }

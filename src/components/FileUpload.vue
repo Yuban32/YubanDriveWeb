@@ -1,6 +1,6 @@
 <template>
     <transition>
-        <div id="upload-task-wrap">
+        <div id="upload-task-wrap" ref="uploadWrap">
             <div class="dropdown-wrap">
                 <el-dropdown trigger="click" ref="dropdown">
                     <el-button :icon="CirclePlus" circle size="large" />
@@ -17,8 +17,9 @@
                     </template>
                 </el-dropdown>
             </div>
-            <div class="upload-task-wrap" v-if="taskIsEmpty" :style="{height: taskListIsClosed==true?'500px':'80px',bottom:0}" >
-                <div class="header">
+            <div class="upload-task-wrap" v-if="taskIsEmpty"
+                :style="{ height: taskListIsClosed == true ? '500px' : '40px' ,bottom:0,cursor:'pointer'}">
+                <div class="header" @click="taskListIsClosed = !taskListIsClosed">
                     <el-icon size="30">
                         <UploadFilled />
                     </el-icon>
@@ -27,38 +28,48 @@
                     </el-text>
                 </div>
                 <el-scrollbar class="container">
-                    <el-empty :description="'空队列'" v-if="!taskIsEmpty" class="el-empty" />
-                    <div class="task-item" v-for="(item, index ) in uploadFileList" :key="index">
-                        <el-progress :percentage="item.parsePercentage" :show-text="false" :stroke-width="3" class="el-progress-2" />
-                        <div class="image-wrap">
-                            <img :src="getAssetsFile('otherType.png')"
-                                class="image">
-                        </div>
-                        <div class="task-info-wrap">
-                            <div class="task-info">
-                                <el-text id="task-title" class="w-220px" truncated size="large" >{{ item.name }}</el-text>
-                                <el-text id="task-title" class="w-220px" truncated size="small">
-                                    
-                                    <span>{{ formatSize(item.size) }} - {{ item.uploadSpeed }}</span>
-                                </el-text>
+                    <el-tabs stretch  v-model="activePane">
+                        <el-tab-pane name="upload" label="上传">
+                            <el-empty :description="'空队列'" v-if="!taskIsEmpty" class="el-empty" />
+                            <div class="task-item" v-for="(item, index ) in uploadFileList" :key="index">
+                                <el-progress :percentage="item.parsePercentage" :show-text="false" :stroke-width="3"
+                                    class="el-progress-2" />
+                                <div class="image-wrap">
+                                    <img :src="getAssetsFile('otherType.png')" class="image">
+                                </div>
+                                <div class="task-info-wrap">
+                                    <div class="task-info">
+                                        <el-text id="task-title" class="w-220px" truncated size="large">{{ item.name
+                                        }}</el-text>
+                                        <el-text id="task-title" class="w-220px" truncated size="small">
 
+                                            <span>{{ formatSize(item.size) }} - {{ item.uploadSpeed }}</span>
+                                        </el-text>
+
+                                    </div>
+                                    <div class="task-button"
+                                        v-if="(item.uploadPercentage > 0) && (item.uploadPercentage < 100)">
+                                        <el-button circle link @click="changeUploadingStop(item)">
+                                            <el-icon size="25" v-if="item.uploadingStop == false">
+                                                <VideoPause />
+                                            </el-icon>
+                                            <el-icon size="25" v-else>
+                                                <Refresh />
+                                            </el-icon>
+
+                                        </el-button>
+                                    </div>
+                                </div>
+                                <el-progress :percentage="item.uploadPercentage" :show-text="false" :stroke-width="3"
+                                    class="el-progress-1" />
                             </div>
-                            <div class="task-button" v-if="(item.uploadPercentage > 0) && (item.uploadPercentage < 100)">
-                                <el-button circle link @click="changeUploadingStop(item)">
-                                    <el-icon size="25" v-if="item.uploadingStop == false">
-                                        <VideoPause />
-                                    </el-icon>
-                                    <el-icon size="25" v-else>
-                                        <Refresh />
-                                    </el-icon>
-                                    
-                                </el-button>
-                            </div>
-                        </div>
-                        <el-progress :percentage="item.uploadPercentage" :show-text="false" :stroke-width="3" class="el-progress-1" />
-                    </div>
+                        </el-tab-pane>
+                        <el-tab-pane name="download" label="下载">
+                            <FileDownloadPane />
+                        </el-tab-pane>
+                    </el-tabs>
                 </el-scrollbar>
-                <div class="bottom" @click="taskListIsClosed=!taskListIsClosed">
+                <div class="bottom" @click="taskListIsClosed = !taskListIsClosed">
                     <el-text size="large">收起</el-text>
                 </div>
             </div>
@@ -77,40 +88,45 @@ import { createFolderAPI } from "../axios/folderRequest"
 import { onMounted, ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useRoute } from 'vue-router';
+import FileDownloadPane from './FileDownloadPane.vue'
 import emitter from "../utils/eventBus"
 //router
 const route = useRoute();
+
+//TODO 完成用户编辑 文件编辑等功能 修复后端鉴权，根据项目修改论文 目前已知没有商业营收手段 没有提升存储空间的操作
+
 //文件夹的UUID 用于上传
 const folderUUID = ref(route.query['folderUUID']);
 let taskTitle = ref<string>("空队列")
-let taskIsEmpty = ref<boolean>(false);
+let taskIsEmpty = ref<boolean>(true);
 // 处理静态资源
 const getAssetsFile = (url: String) => {
     return new URL(`../assets/image/${url}`, import.meta.url).href;
 }
-
-//element component
-const elUploadBtn = ref();
 //菜单相关
 const dropdown = ref();
-const openMenu = () => {
-    dropdown.value.handleOpen();
-    console.log(2);
-}
-
+const activePane = ref("upload")
 //关闭任务列表
 const taskListIsClosed = ref<boolean>(true);
 
+//emitter 事件总线
+emitter.on("fileDownload", () => {
+    taskTitle.value = "下载文件中"
+    activePane.value = "download"
+})
+emitter.on("downloadFinish", () => {
+    taskTitle.value = "下载完成"
+})
 //创建文件夹
-const createFolder = ()=>{
+const createFolder = () => {
     ElMessageBox.prompt('请输入文件夹名', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
         inputErrorMessage: '请输入文件夹名',
     })
-        .then(async({ value }) => {
+        .then(async ({ value }) => {
             let folderName = value;
-            await createFolderAPI(folderUUID.value,folderName);
+            await createFolderAPI(folderUUID.value, folderName);
             emitter.emit("reloadFileList");
         })
         .catch(() => {
@@ -119,50 +135,51 @@ const createFolder = ()=>{
                 message: '取消创建',
             })
         })
-    
+
 }
 
 
 //文件上传
-var uploadFileList:any = ref([]);
+//文件上传列表
+var uploadFileList: any = ref([]);
 //计算文件MD5值
-function computeMd5(file:any, uploadFile:any) {
+function computeMd5(file: any, uploadFile: any) {
     //如果此函数使用箭头函数的话,那么将无法访问到uploadFile.parsePercentage.value 这个值
     return new Promise((resolve, reject) => {
-      //分片读取并计算md5
-      taskTitle.value = "正在校验文件中..."
-      const chunkTotal = 100; //分片数
-      const chunkSize = Math.ceil(file.size / chunkTotal);
-      const fileReader = new FileReader();
-      const md5 = new SparkMD5();
-      let index = 0;
-      const loadFile = (uploadFile:any) => {
-        uploadFile.parsePercentage.value = Math.floor((index / file.size) * 100);
-        const slice = file.slice(index, index + chunkSize);
-        
-        fileReader.readAsBinaryString(slice);
-      };
-      loadFile(uploadFile);
-      fileReader.onload = (e) => {
-        md5.appendBinary(e.target?.result);
-        if (index < file.size) {
-          index += chunkSize;
-          loadFile(uploadFile);
-        } else {
-          // md5.end() 就是文件md5码
-          resolve(md5.end());
-        }
-      };
+        //分片读取并计算md5
+        taskTitle.value = "正在校验文件中..."
+        const chunkTotal = 100; //分片数
+        const chunkSize = Math.ceil(file.size / chunkTotal);
+        const fileReader = new FileReader();
+        const md5 = new SparkMD5();
+        let index = 0;
+        const loadFile = (uploadFile: any) => {
+            uploadFile.parsePercentage.value = Math.floor((index / file.size) * 100);
+            const slice = file.slice(index, index + chunkSize);
+
+            fileReader.readAsBinaryString(slice);
+        };
+        loadFile(uploadFile);
+        fileReader.onload = (e) => {
+            md5.appendBinary(e.target?.result);
+            if (index < file.size) {
+                index += chunkSize;
+                loadFile(uploadFile);
+            } else {
+                // md5.end() 就是文件md5码
+                resolve(md5.end());
+            }
+        };
     });
-  }
+}
 
 //文件上传前 el-upload
 const beforeUpload = async (file: any) => {
-    
-    
+    activePane.value = "upload"
+
     console.log("2.文件上传前");
     taskIsEmpty.value = true
-    var uploadFile:any = {};
+    var uploadFile: any = {};
     uploadFile.name = file.name;
     uploadFile.size = file.size;
     uploadFile.parsePercentage = ref(0);
@@ -180,9 +197,9 @@ const beforeUpload = async (file: any) => {
     uploadFile.folderUUID = folderUUID.value;
     uploadFile.fileName = file.name;
     var res = await uploadFileCheckAPI(uploadFile);
-    if(res.data == undefined){
+    if (res.data == undefined) {
         taskTitle.value = res.msg;
-    }else{
+    } else {
         res = res.data;
         if (!res.isUploaded) {
             uploadFile.chunkList = res.chunkList;
@@ -199,7 +216,7 @@ const beforeUpload = async (file: any) => {
             });
         }
     }
-    
+
 }
 //上传分片
 const uploadChunk = (file: any, index: any, uploadFile: any) => {
@@ -208,7 +225,7 @@ const uploadChunk = (file: any, index: any, uploadFile: any) => {
     if (index <= chunkTotal) {
         let startTime = new Date().valueOf();
         //判断是否存在
-        let exit = uploadFile.chunkList.includes(index);     
+        let exit = uploadFile.chunkList.includes(index);
         if (!exit) {
             if (!uploadFile.uploadingStop) {
                 //分片上传的同时计算进度条和上传速度
@@ -240,16 +257,16 @@ const uploadChunk = (file: any, index: any, uploadFile: any) => {
                     uploadFile.uploadPercentage = Math.floor((uploadFile.chunkList.length / chunkTotal) * 100);
                     uploadChunk(file, index + 1, uploadFile);
                     //事件总线 上传完毕后重新获取文件列表
-                    if(index == chunkTotal){
+                    if (index == chunkTotal) {
                         taskTitle.value = "文件上传完成"
                         emitter.emit("reloadFileList");
                     }
                 }).catch((err: any) => {
                     console.log(err);
-                    
+
                 });
-            } 
-        }else{
+            }
+        } else {
             uploadFile.uploadPercentage = Math.floor((uploadFile.chunkList.length / chunkTotal) * 100);
             uploadChunk(file, index + 1, uploadFile);
         }
@@ -262,9 +279,9 @@ const changeUploadingStop = (uploadFile: any) => {
     if (!uploadFile.uploadingStop) {
         taskTitle.value = "正在上传文件中..."
         console.log(uploadFile.file);
-        
+
         uploadChunk(uploadFile.file, 1, uploadFile);
-    }else{
+    } else {
         taskTitle.value = "上传暂停中..."
     }
 }
@@ -281,24 +298,23 @@ const upload = (xhrData: any) => {
         uploadChunk(xhrData.file, 1, uploadFile);
     }
 }
-const formatSize = (size:any)=> {
-  //size的单位大小k
-  const units = ['B', 'KB', 'MB', 'GB']; // 单位列表
-  let unitIndex = 0; // 单位索引
-  var pointLength = 2;
-  // 循环计算数据大小和单位
-  while (size >= 1024 && unitIndex < units.length - 1) {
-    size /= 1024;
-    unitIndex++;
-  }
-  return size.toFixed(2) + ' ' + units[unitIndex];
+const formatSize = (size: any) => {
+    //size的单位大小k
+    const units = ['B', 'KB', 'MB', 'GB']; // 单位列表
+    let unitIndex = 0; // 单位索引
+    var pointLength = 2;
+    // 循环计算数据大小和单位
+    while (size >= 1024 && unitIndex < units.length - 1) {
+        size /= 1024;
+        unitIndex++;
+    }
+    return size.toFixed(2) + ' ' + units[unitIndex];
 }
 
 </script>
 
 <style scoped>
 #upload-task-wrap {
-    overflow: hidden;
     width: 100%;
     height: 500px;
     position: absolute;
@@ -312,9 +328,11 @@ const formatSize = (size:any)=> {
     bottom: 0px;
     z-index: 9999;
 }
-:deep(.el-upload){
+
+:deep(.el-upload) {
     width: 100%;
 }
+
 .el-icon {
     padding-right: 5px;
 }
@@ -324,14 +342,15 @@ const formatSize = (size:any)=> {
     width: 375px;
     display: flex;
     flex-direction: column;
-    background: var(--el-color-info-light-7);
+    /* background: var(--el-color-info-light-7); */
+    background: var(--el-bg-color-page);
     border-radius: var(--el-border-radius-round);
-    box-shadow: var(--el-dropdown-menu-box-shadow);
+    box-shadow: var(--el-box-shadow);
     overflow: hidden;
     position: absolute;
     left: 0;
     z-index: 200;
-    transition: all .3s ease;
+    transition: height .3s ease;
 }
 
 .header {
@@ -341,7 +360,11 @@ const formatSize = (size:any)=> {
     box-sizing: border-box;
     background: var(--el-bg-color-page);
     line-height: 30px;
-
+    user-select: none;
+    transition: background .3s ease;
+}
+.header:hover{
+    background-color: var(--el-border-color-hover);
 }
 
 
@@ -349,11 +372,13 @@ const formatSize = (size:any)=> {
 .task-item {
     width: 100%;
     height: 50px;
+    margin-bottom: 5px;
     padding: 5px 10px;
     box-sizing: border-box;
     display: flex;
     position: relative;
 }
+
 .bottom {
     height: 40px;
     line-height: 40px;
@@ -362,6 +387,7 @@ const formatSize = (size:any)=> {
     cursor: pointer;
     user-select: none;
 }
+
 .el-progress-1 {
     width: 100%;
     position: absolute;

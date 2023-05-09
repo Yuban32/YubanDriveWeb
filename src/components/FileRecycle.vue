@@ -38,7 +38,6 @@ import { getRecycleListAPI,trashAPI ,restoreAPI} from "../axios/recycleRequest";
 import { onBeforeMount, onMounted, reactive, ref } from "vue"
 import { FileListDTO } from "../interface/Interface";
 import { dateTimeFormat } from "../utils/util";
-import FileMenu from "./FileMenu/index";
 
 
 let isEmpty = ref<boolean>(false);

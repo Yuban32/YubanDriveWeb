@@ -60,11 +60,25 @@ export const renameFileAPI = async (newFileName:string,currentFileName:object,fo
     let data = await axios({
         url:"/fileManagement/rename",
         method:"POST",
-        params:{
-            newFileName:newFileName,
+        data:{
+            targetFileName:newFileName,
             currentFileName:currentFileName,
             folderUUID:folderUUID
         }
-    }).then((res:any)=>{return res.data}).catch((error:any)=>error)
+    }).then((res:any)=>{return res.data.data}).catch((error:any)=>error)
     return data;
+}
+
+export const fileDownloadAPI = async(FormData:FormData)=>{
+    let data = await axios({
+        url:"/fileDownload/file",
+        method:"post",
+        data:FormData,
+        responseType:"blob",
+        timeout:50000
+    }).then((res:any)=>{
+        return res.data
+    }).catch((error:any)=>error)
+    return data;
+
 }

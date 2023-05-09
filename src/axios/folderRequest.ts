@@ -45,9 +45,9 @@ export const renameFolderAPI = async (folderUUID:any,folderName:any) =>{
     let data = await axios({
         url:"/folder/rename",
         method:"POST",
-        params:{
-            folderUUID:folderUUID,
-            newFolderName:folderName
+        data:{
+            currentFolderUUID:folderUUID,
+            folderName:folderName
         }
     }).then((res:any)=>{return res.data.data}).catch((error:any)=>error);
     return data;

@@ -11,7 +11,7 @@
                             <el-button :icon="Plus" circle size="small" class="dash"/>
                             <template #dropdown>
                                 <el-dropdown-menu>
-                                    <el-dropdown-item>
+                                    <el-dropdown-item @click="downloadBTN(item)">
                                         下载文件
                                     </el-dropdown-item>
                                     <el-dropdown-item @click="renameFiles(item)">
@@ -24,8 +24,7 @@
                     </div>
                     <div class="img-wrap">
                         <el-image :src="item.thumbnailURL" class="image" ref="elImages" :preview-teleported="true"
-                            @click="clickImage(item, $event)" :preview-src-list="imgList"
-                            @contextmenu.prevent.stop="contextMenu(item, $event)" />
+                            @click="clickImage(item, $event)" :preview-src-list="imgList" />
                     </div>
                     <div class="item-info">
                         <el-text class="w-115px" truncated>{{ item.name }}</el-text>
@@ -38,18 +37,43 @@
 </template>
 
 <script setup lang="ts">
-//import
+/**
+ * import
+ */
 import { CirclePlus, Plus } from "@element-plus/icons-vue"
-import { getFolderListAPI } from "../axios/folderRequest";
+import { getFolderListAPI,renameFolderAPI } from "../axios/folderRequest";
 import { getFileListAPI, renameFileAPI } from "../axios/fileRequest";
 import { removeFileToRecycleAPI, removeFolderToRecycleAPI} from "../axios/recycleRequest"
 import { useRoute, useRouter } from "vue-router";
-import { onBeforeMount, onMounted, reactive, ref } from "vue"
+import { onBeforeMount, onMounted, reactive, ref,toRaw } from "vue"
 import { FileListDTO } from "../interface/Interface";
 import { dateTimeFormat } from "../utils/util";
-import FileMenu from "./FileMenu/index";
 import FileUpload from "./FileUpload.vue";
 import emitter from "../utils/eventBus";
+
+/**
+ * Data
+ */
+let isEmpty = ref<boolean>(false);
+
+let folderList: any[] = reactive([]);
+let imageList: any[] = reactive([]);
+let imgList: any[] = reactive([]);
+let taskIsEmpty = ref<boolean>(false);
+const elImages = ref()
+
+/**
+ * common
+ */
+//处理静态资源
+const getAssetsFile = (url: String) => {
+    return new URL(`../assets/image/${url}`, import.meta.url).href;
+}
+//静态图片
+const zipImg = getAssetsFile("zip.png")
+const folderImg = getAssetsFile("folderImage.png")
+const otherTypeFile = getAssetsFile("otherType.png")
+const musicImg = getAssetsFile("music.png")
 //事件总线 上传完毕后重新加载文件列表
 emitter.on("reloadFileList", () => {
     setTimeout(()=>{
@@ -60,15 +84,42 @@ emitter.on("reloadFileList", () => {
 //vue router
 const route = useRoute();
 const router = useRouter();
+//根据UUID去重
+const uniqueList = (list:any,target:FileListDTO) =>{
+    for(let i = 0; i < list.length; i++){
+        if(list[i].fileUUID == target.fileUUID){       
+            list[i].name = target.name;
+            break;
+        }
+    }
+}
+/**
+ * 
+ * function
+ */
+
+//下载函数块
+const downloadBTN = (item:FileListDTO)=>{
+    //判断类型
+    if(item.type == "folder"){
+        ElMessage({
+            type:"warning",
+            message:"暂不支持文件夹下载"
+        })
+    }else if(item.type == "file"){
+        emitter.emit("fileDownload",item)
+        
+        // filesProps.value = toRaw(item);
+
+    }
+}
+
 //重命名文件
-//TODO 4-29 完成重命名文件 但仍需完善
-//TODO 后续工作 完成文件夹重命名、文件点击下载等
 const renameFiles = (item: FileListDTO) => {
     let currentFolderUUID: string = route.query.folderUUID as string
     let type:string = "";
     let fileName:string = "";
     let fileExtension:string = "";
-    console.log(item);
     if(item.type == 'folder'){
         type = "文件夹"
         fileName = item.name as string;
@@ -84,9 +135,14 @@ const renameFiles = (item: FileListDTO) => {
         inputErrorMessage: `请输入${type}名`,
         inputValue:fileName as string
     })
-        .then(({ value }) => {
+        .then(async({ value }) => {
             if(item.type == 'file'){
-                renameFileAPI(`${value}.${fileExtension}`,item.name,currentFolderUUID)
+                let data:FileListDTO = await renameFileAPI(`${value}.${fileExtension}`,item.name,currentFolderUUID);
+                uniqueList(folderList,data);
+                
+            }else if(item.type == 'folder'){
+                let data:FileListDTO =  await renameFolderAPI(item.fileUUID,value);
+                uniqueList(folderList,data);
             }
 
         })
@@ -141,20 +197,6 @@ const recycle = (item: any) => {
         })
 }
 
-let isEmpty = ref<boolean>(false);
-
-let folderList: any[] = reactive([]);
-let imageList: any[] = reactive([]);
-let imgList: any[] = reactive([]);
-let taskIsEmpty = ref<boolean>(false);
-const contextMenu = (item: any, event: any) => {
-    // console.log(item);
-
-    // console.log(event);
-
-    FileMenu(event)
-}
-
 //预览图片
 const clickImage = (item: any, e: any) => {
 
@@ -163,16 +205,7 @@ const clickImage = (item: any, e: any) => {
         imgList.push(item.fullSizeImageURL)
     }
 }
-const elImages = ref()
-//处理静态资源
-const getAssetsFile = (url: String) => {
-    return new URL(`../assets/image/${url}`, import.meta.url).href;
-}
-//静态图片
-const zipImg = getAssetsFile("zip.png")
-const folderImg = getAssetsFile("folderImage.png")
-const otherTypeFile = getAssetsFile("otherType.png")
-const musicImg = getAssetsFile("music.png")
+
 //卡片点击事件
 const fileClickHandler = (item: FileListDTO, event: any) => {
     if (event.target != "svg") {

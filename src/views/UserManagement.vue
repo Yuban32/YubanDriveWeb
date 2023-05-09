@@ -1,15 +1,15 @@
 <template>
-    <div>
+    <div id="user-management-wrap">
         <el-card>
             <h1>用户管理</h1>
-            <el-table :data="userList" style="width: 100%">
+            <el-table :data="userList" style="width: 100%" fit>
                 <el-table-column prop="id" label="ID" width="50" />
                 <el-table-column prop="username" label="用户名" width="100" />
                 <el-table-column prop="email" label="邮箱" width="180" />
                 <el-table-column prop="roles" label="角色" width="100" />
                 <el-table-column prop="usedStorage" label="已用空间" width="180" />
                 <el-table-column prop="totalStorage" label="总空间" width="180" />
-                <el-table-column align="right">
+                <el-table-column align="right" min-width="140" fixed="right">
                     <template #header>
                         <el-input v-model="search" size="small" placeholder="Type to search" />
                     </template>
@@ -23,10 +23,10 @@
         </el-card>
         <el-card>
             <h1>存储管理</h1>
-            <el-table :data="folderList" style="width: 100%">
+            <el-table :data="folderList" style="width: 100%;height: 100%;" show-overflow-tooltip>
 
                 <el-table-column prop="fileUUID" label="FileUUID" width="150" />
-                <el-table-column prop="name" label="文件名" width="150" />
+                <el-table-column fixed  prop="name" label="文件名" width="150" />
                 <el-table-column prop="category" label="类型" width="150" />
                 <el-table-column prop="type" label="文件类型" width="150" />
                 <el-table-column prop="size" label="文件大小" width="100" />
@@ -36,7 +36,7 @@
                 <el-table-column prop="fullSizeImageURL" label="完整图片路径" width="150" />
                 <el-table-column prop="thumbnailURL" label="缩略图路径" width="150" />
                 <el-table-column prop="createdTime" label="上传时间" width="180" />
-                <el-table-column align="right">
+                <el-table-column align="right" fixed="right" width="140">
                     <template #header>
                         <el-input v-model="search" size="small" placeholder="Type to search" />
                     </template>
@@ -54,8 +54,8 @@
 <script setup lang="ts">
 import { onBeforeMount, reactive, ref, computed } from "vue";
 import { getUserList } from "../axios/userRequest";
-import { getAllUserFileList } from "../axios/fileRequest";
-import { getAllUserFolder } from "../axios/folderRequest";
+import { getAllUserFileListAPI } from "../axios/fileRequest";
+import { getAllUserFolderAPI } from "../axios/folderRequest";
 let userList: any[] = reactive([]);
 const search = ref('')
 const filterTableData = computed(() =>
@@ -103,7 +103,7 @@ onBeforeMount(async () => {
 
 
        //初始化获取文件夹列表
-       let folderData: any[] = await getAllUserFolder();
+       let folderData: any[] = await getAllUserFolderAPI();
     if (folderData != undefined) {
         folderData = Object.values(folderData);
         folderData.forEach((item) => {
@@ -115,7 +115,7 @@ onBeforeMount(async () => {
         folderList.push(...folderData)
     }
     //初始化获取文件列表
-    let fileData: any[] = await getAllUserFileList();
+    let fileData: any[] = await getAllUserFileListAPI();
     if (fileData != undefined) {
         fileData = Object.values(fileData);
         fileData.forEach((item) => {
@@ -139,6 +139,9 @@ onBeforeMount(async () => {
 </script>
 
 <style scoped>
+#user-management-wrap{
+    height: 100vh;
+}
 h1{
     margin-bottom: 15px;
     text-align: center;

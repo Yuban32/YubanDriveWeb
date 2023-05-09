@@ -4,18 +4,21 @@
     <el-container>
       <el-aside width="240px">
         <div class="grid-content ep-bg-purple el-menu-wrap">
+          <div class="app-title">
+            <h1>Yuban Drive</h1>
+          </div>
           <el-menu :default-active="defaultActive" class="el-menu" @select="handleSelect">
             <el-menu-item index="/folder">
               <el-icon>
                 <Files />
               </el-icon>
-              <h1>文件</h1>
+              <p>文件</p>
             </el-menu-item>
             <el-menu-item index="/fileRecycle">
               <el-icon>
                 <Delete />
               </el-icon>
-              <h1>回收站</h1>
+              <p>回收站</p>
             </el-menu-item>
           </el-menu>
           <div class="userProfile-wrap">
@@ -32,6 +35,7 @@
                 <div class="user-info" @click="toUserPage">
                   <img :src="userData?.avatar" alt="用户头像">
                   <span>{{ userData?.username }}</span>
+                  <el-icon><More  /></el-icon>
                 </div>
               </div>
             </div>
@@ -62,7 +66,7 @@
 * import module 
 */
 import {
-  Files, Check, Close, Sunny, Moon, Delete, CirclePlus
+  Files, Check, Close, Sunny, Moon, Delete, CirclePlus,More
 } from '@element-plus/icons-vue';
 import { useToggle } from '@vueuse/core';
 import { useDark } from '@vueuse/core';
@@ -190,13 +194,25 @@ onBeforeMount(() => {
   background-color: var(--el-bg-color-page);
   display: flex;
   flex-direction: column;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+.grid-content .app-title{
+  font-size: 25px;
+  line-height: 25px;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
 }
 .el-menu-item.is-active{
   background-color: var(--el-menu-hover-bg-color);
 }
 .el-menu {
   /* height: 100%; */
-  padding-top: 50px;
+  /* padding-top: 50px; */
   flex: 10;
   background-color: transparent;
   display: flex;
@@ -253,6 +269,18 @@ onBeforeMount(() => {
   margin-right: 10px;
   border-radius: 50%;
   background-color: #f2f3f5;
+}
+.el-icon{
+  margin-left: 5px;
+
+}
+.user-info-wrap{
+  transition: background .3s;
+  
+}
+.user-info-wrap:hover{
+  border-radius: 15px;
+  background: var(--el-menu-hover-bg-color);
 }
 </style>
   
