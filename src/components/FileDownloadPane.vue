@@ -34,18 +34,16 @@
 /**
  * import
  */
-import { UploadFilled, Loading, Close, VideoPause, Refresh, CirclePlus } from '@element-plus/icons-vue';
+import { VideoPause, Refresh } from '@element-plus/icons-vue';
 import { ref } from 'vue';
-import { fileDownloadAPI } from "../axios/fileRequest";
-import { FileListDTO, FileDonwloadType } from "../interface/Interface";
+import { fileDownloadAPI } from "../axios/fileAPIList";
+import { FileDonwloadType } from "../interface/Interface";
 import emitter from "../utils/eventBus";
 
 /**
  * variable
  */
 let downloadFileList: any = ref([]);
-let taskTitle = ref<string>("下载队列")
-let taskIsEmpty = ref<boolean>(true);
 // 处理静态资源
 const getAssetsFile = (url: String) => {
     return new URL(`../assets/image/${url}`, import.meta.url).href;
@@ -153,8 +151,6 @@ const downloadChunk = async (index: any, file: any) => {
 
 }
 
-//关闭任务列表
-const taskListIsClosed = ref<boolean>(true);
 //单位格式化
 const formatSize = (size: any) => {
     //size的单位大小k

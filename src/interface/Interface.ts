@@ -51,3 +51,13 @@ export interface FileDonwloadType{
     blobList:[],
     chunkList:[]
 }
+export interface UserEditDTO{
+    id:number,
+    userName:string,
+    password:string,
+    avatar:string,
+    email:string,
+    role:string,
+    status:number,
+    totalStorage:number
+}

@@ -41,9 +41,9 @@
  * import
  */
 import { CirclePlus, Plus } from "@element-plus/icons-vue"
-import { getFolderListAPI,renameFolderAPI } from "../axios/folderRequest";
-import { getFileListAPI, renameFileAPI } from "../axios/fileRequest";
-import { removeFileToRecycleAPI, removeFolderToRecycleAPI} from "../axios/recycleRequest"
+import { getFolderListAPI,renameFolderAPI } from "../axios/folderAPIList";
+import { getFileListAPI, renameFileAPI } from "../axios/fileAPIList";
+import { removeFileToRecycleAPI, removeFolderToRecycleAPI} from "../axios/recycleAPIList"
 import { useRoute, useRouter } from "vue-router";
 import { onBeforeMount, onMounted, reactive, ref,toRaw } from "vue"
 import { FileListDTO } from "../interface/Interface";

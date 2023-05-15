@@ -5,20 +5,20 @@
       <el-aside width="240px">
         <div class="grid-content ep-bg-purple el-menu-wrap">
           <div class="app-title">
-            <h1>Yuban Drive</h1>
+            <h1>后台管理</h1>
           </div>
-          <el-menu :default-active="defaultActive" class="el-menu" @select="handleSelect">
-            <el-menu-item index="/folder">
+          <el-menu default-active="/ControllPanel/UserManagement" class="el-menu" @select="handleSelect">
+            <el-menu-item index="/ControllPanel/UserManagement">
               <el-icon>
                 <Files />
               </el-icon>
-              <p>文件</p>
+              <p>用户管理</p>
             </el-menu-item>
-            <el-menu-item index="/fileRecycle">
+            <el-menu-item index="/ControllPanel/StorageManagement">
               <el-icon>
                 <Delete />
               </el-icon>
-              <p>回收站</p>
+              <p>存储管理</p>
             </el-menu-item>
           </el-menu>
           <div class="userProfile-wrap">
@@ -48,9 +48,6 @@
             <h1>{{ title }}</h1>
             
           </div>
-          <!-- <el-breadcrumb separator="/">
-            <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
-          </el-breadcrumb> -->
         </el-header>
         <el-main>
           <router-view :key="$route.fullPath"></router-view>
@@ -83,8 +80,8 @@ const router = useRouter();
 const route = useRoute();
 //设置title
 const title = ref();
-if(route.name == "FileRecycle") title.value = "回收站";
-if(route.name == "Folder") title.value = "文件"
+if(route.name == "UserManagement") title.value = "用户管理";
+if(route.name == "StorageManagement") title.value = "存储管理"
 
 //Menu菜单默认高亮页面
 const defaultActive = computed(()=>{return route.path})
@@ -97,14 +94,11 @@ const toUserPage = ()=>{
 }
 
 const handleSelect = (key: string) => {
-  if (key == "/folder") {
+  if (key == "/ControllPanel/UserManagement") {
     router.push({
-      path: key,
-      query: {
-        folderUUID
-      }
+      path: key
     })
-  } else if(key =="/fileRecycle") {
+  } else if(key =="/ControllPanel/StorageManagement") {
     router.push({
       path: key
     })
@@ -142,7 +136,7 @@ emitter.on("reloadFileList",()=>{
 })
 //DOM渲染前初始化数据
 onBeforeMount(() => {
-  if(route.path == "/user") title.value = "用户中心"
+  if(route.path == "/ControllPanel/UserManagement") title.value = "用户管理"
   //初始化主题功能
   let switchValue = localStorage.getItem("useDarkKEY")
   if (switchValue == "auto") {
@@ -152,21 +146,6 @@ onBeforeMount(() => {
   }
   //初始化用户数据
   initUserData()
-  
-  //初始化文件浏览数据
-  if (sessionStorage.getItem("folderUUID") != null) {
-    folderUUID = sessionStorage.getItem("folderUUID")!;
-  } else {
-    sessionStorage.setItem("folderUUID", "root");
-  }
-  if(route.path == "/"){
-    router.push({
-      path: "/folder",
-      query: {
-        folderUUID
-      }
-    })
-  }
 })
 </script>
 <style scoped>

@@ -1,14 +1,14 @@
 import axios from "./axios"
-
+import { UserEditDTO } from "../interface/Interface"
 /**
  * 用户API
  */
 
-export const login = async(param:String) =>{
+export const login = async(params:String) =>{
     return await axios({
         url:"/user/login",
         method:"POST",
-        data:param,
+        data:params,
         headers:{
             "Content-Type":"application/json"
         }
@@ -22,11 +22,11 @@ export const logout = async() =>{
     })
 }
 
-export const register = async(param:String) =>{
+export const register = async(params:String) =>{
     return await axios({
         url:"/user/register",
         method:"POST",
-        data:param,
+        data:params,
         headers:{
             "Content-Type":"application/json"
         }
@@ -46,4 +46,15 @@ export const getUserList = async()=>{
         method: "GET",
     }).then((res:any)=>{return res.data.data}).catch((error:any)=>error)
     return data
+}
+export const userEdit = async(params:String)=>{
+    let data = await axios({
+        url:"/userManagement/edit",
+        method:"POST",
+        data:params,
+        headers:{
+            "Content-Type":"application/json"
+        }
+    }).then((res:any)=>{return res.data}).catch((error:any)=>error)
+    return data;
 }

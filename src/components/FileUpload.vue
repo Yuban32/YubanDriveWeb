@@ -83,8 +83,8 @@
 import { UploadFilled, Loading, Close, VideoPause, Refresh, CirclePlus } from '@element-plus/icons-vue';
 import SparkMD5 from "spark-md5";
 import { FileUploadType } from "../interface/Interface"
-import { uploadFileCheckAPI, uploadFileAPI } from "../axios/fileRequest"
-import { createFolderAPI } from "../axios/folderRequest"
+import { uploadFileCheckAPI, uploadFileAPI } from "../axios/fileAPIList"
+import { createFolderAPI } from "../axios/folderAPIList"
 import { onMounted, ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useRoute } from 'vue-router';
@@ -94,6 +94,7 @@ import emitter from "../utils/eventBus"
 const route = useRoute();
 
 //TODO 完成用户编辑 文件编辑等功能 修复后端鉴权，根据项目修改论文 目前已知没有商业营收手段 没有提升存储空间的操作
+
 
 //文件夹的UUID 用于上传
 const folderUUID = ref(route.query['folderUUID']);
@@ -107,7 +108,7 @@ const getAssetsFile = (url: String) => {
 const dropdown = ref();
 const activePane = ref("upload")
 //关闭任务列表
-const taskListIsClosed = ref<boolean>(true);
+const taskListIsClosed = ref<boolean>(false);
 
 //emitter 事件总线
 emitter.on("fileDownload", () => {
@@ -345,7 +346,7 @@ const formatSize = (size: any) => {
     /* background: var(--el-color-info-light-7); */
     background: var(--el-bg-color-page);
     border-radius: var(--el-border-radius-round);
-    box-shadow: var(--el-box-shadow);
+    box-shadow: var(--el-box-shadow-dark);
     overflow: hidden;
     position: absolute;
     left: 0;

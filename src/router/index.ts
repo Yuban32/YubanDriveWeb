@@ -2,11 +2,13 @@ import { createRouter, createWebHashHistory } from "vue-router";
 const Login = () => import("../views/Login.vue");
 const Drive = () => import("../views/Drive.vue");
 const File = () => import("../components/File.vue");
-const FileRecycle = () => import("../components/FileRecycle.vue")
-const User = () => import("../views/User.vue")
-const ModifyUserInfo = () => import("../views/ModifyUserInfo.vue")
-const UserManagement = () => import("../views/UserManagement.vue")
-const NotFound = () => import("../views/NotFound.vue")
+const FileRecycle = () => import("../components/FileRecycle.vue");
+const User = () => import("../views/User.vue");
+const ModifyUserInfo = () => import("../views/ModifyUserInfo.vue");
+const UserManagement = () => import("../components/ControllPanel/UserManagement.vue");
+const StorageManagement = () => import("../components/ControllPanel/StorageManagement.vue");
+const NotFound = () => import("../views/NotFound.vue");
+const ControllPanel = () => import("../views/ControllPanel.vue");
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
@@ -22,28 +24,39 @@ const router = createRouter({
         {
           name: "Folder",
           path: "/folder",
-          component: File
+          component: File,
+          meta: {
+            requireLogin: true,
+            requireAdminAuthorization: false,
+          },
 
         },
         {
           name: "FileRecycle",
           path: "/fileRecycle",
-          component: FileRecycle
+          component: FileRecycle,
+          meta: {
+            requireLogin: true,
+            requireAdminAuthorization: false,
+          },
         },
         {
           name: "Users",
           path: "/users",
-          component: User
+          component: User,
+          meta: {
+            requireLogin: true,
+            requireAdminAuthorization: false,
+          },
         },
         {
           name: "ModifyUserInfo",
           path: "/users/modify",
-          component: ModifyUserInfo
-        },
-        {
-          name: "UserManagement",
-          path: "/management",
-          component: UserManagement
+          component: ModifyUserInfo,
+          meta: {
+            requireLogin: true,
+            requireAdminAuthorization: false,
+          },
         }
       ]
     },
@@ -55,6 +68,35 @@ const router = createRouter({
         requireLogin: false,
         requireAdminAuthorization: false,
       },
+    },
+    {
+      name:"ControllPanel",
+      path:"/ControllPanel",
+      component:ControllPanel,
+      meta: {
+        requireLogin: true,
+        requireAdminAuthorization: true,
+      },
+      children:[
+        {
+          name: "UserManagement",
+          path: "/ControllPanel/UserManagement",
+          component: UserManagement,
+          meta: {
+            requireLogin: true,
+            requireAdminAuthorization: true,
+          },
+        },
+        {
+          name: "StorageManagement",
+          path: "/ControllPanel/StorageManagement",
+          component: StorageManagement,
+          meta: {
+            requireLogin: true,
+            requireAdminAuthorization: true,
+          },
+        }
+      ]
     },
     //404页面
     {

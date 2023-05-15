@@ -10,7 +10,7 @@
                             <el-input v-model="ruleForm.username" type="text" autocomplete="off" />
                         </el-form-item>
                         <el-form-item label="密码" prop="password">
-                            <el-input v-model="ruleForm.password" type="password" autocomplete="off" />
+                            <el-input v-model="ruleForm.password" type="password" autocomplete="off" @keyup.enter.native="loginSubmitForm(loginRuleFormRef)" />
                         </el-form-item>
                         <el-form-item>
                             <el-button type="primary" @click="loginSubmitForm(loginRuleFormRef)">提交</el-button>
@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { login, register } from "../axios/userRequest";
+import { login, register } from "../axios/userAPIList";
 import { FormInstance, FormRules } from "element-plus";
 import { reactive, ref } from "vue";
 import { useStore } from "vuex";

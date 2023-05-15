@@ -10,6 +10,8 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     copy: typeof import('./src/components/FileDownload copy.vue')['default']
+    EditPane: typeof import('./src/components/EditPane.vue')['default']
+    EditPanel: typeof import('./src/components/ControllPanel/EditPanel.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
     ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']
@@ -31,11 +33,14 @@ declare module '@vue/runtime-core' {
     ElMenu: typeof import('element-plus/es')['ElMenu']
     ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
     ElMenuItemGroup: typeof import('element-plus/es')['ElMenuItemGroup']
+    ElOption: typeof import('element-plus/es')['ElOption']
     ElProgress: typeof import('element-plus/es')['ElProgress']
+    ElRadio: typeof import('element-plus/es')['ElRadio']
     ElRadioButton: typeof import('element-plus/es')['ElRadioButton']
     ElRadioGroup: typeof import('element-plus/es')['ElRadioGroup']
     ElRow: typeof import('element-plus/es')['ElRow']
     ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
+    ElSelect: typeof import('element-plus/es')['ElSelect']
     ElSubMenu: typeof import('element-plus/es')['ElSubMenu']
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
     ElTable: typeof import('element-plus/es')['ElTable']
@@ -57,6 +62,9 @@ declare module '@vue/runtime-core' {
     Message: typeof import('./src/components/message/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    StorageManagement: typeof import('./src/components/ControllPanel/StorageManagement.vue')['default']
     TaskQueue: typeof import('./src/components/TaskQueue.vue')['default']
+    UserManagement: typeof import('./src/components/ControllPanel/UserManagement.vue')['default']
+    UserStorageManagement: typeof import('./src/components/ControllPanel/UserStorageManagement.vue')['default']
   }
 }

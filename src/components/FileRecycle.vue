@@ -34,7 +34,7 @@
 
 <script setup lang="ts">
 import { CirclePlus, Plus } from "@element-plus/icons-vue"
-import { getRecycleListAPI,trashAPI ,restoreAPI} from "../axios/recycleRequest";
+import { getRecycleListAPI,trashAPI ,restoreAPI} from "../axios/recycleAPIList";
 import { onBeforeMount, onMounted, reactive, ref } from "vue"
 import { FileListDTO } from "../interface/Interface";
 import { dateTimeFormat } from "../utils/util";

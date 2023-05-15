@@ -17,7 +17,7 @@
                 </div>
                 <div class="bottom">
                     <el-button type="primary" @click="router.push('/users/modify')">修改信息</el-button>
-                    <el-button type="primary" v-if="userInfo.roles == 'admin'" @click="router.push('/management')">进入后台</el-button>
+                    <el-button type="primary" v-if="userInfo.roles == 'admin'" @click="router.push('/ControllPanel/UserManagement')">进入后台</el-button>
                 </div>
             </el-card>
         </div>
@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import { onBeforeMount, ref } from "vue";
-import { getUserInfo } from "../axios/userRequest";
+import { getUserInfo } from "../axios/userAPIList";
 import { useStore } from "vuex";
 import { key } from "../vuex/store"
 import { useRouter } from "vue-router";

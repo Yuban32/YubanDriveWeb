@@ -1,27 +1,6 @@
 <template>
     <div id="user-management-wrap">
         <el-card>
-            <h1>用户管理</h1>
-            <el-table :data="userList" style="width: 100%" fit>
-                <el-table-column prop="id" label="ID" width="50" />
-                <el-table-column prop="username" label="用户名" width="100" />
-                <el-table-column prop="email" label="邮箱" width="180" />
-                <el-table-column prop="roles" label="角色" width="100" />
-                <el-table-column prop="usedStorage" label="已用空间" width="180" />
-                <el-table-column prop="totalStorage" label="总空间" width="180" />
-                <el-table-column align="right" min-width="140" fixed="right">
-                    <template #header>
-                        <el-input v-model="search" size="small" placeholder="Type to search" />
-                    </template>
-                    <template #default="scope">
-                        <el-button size="small" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
-                        <el-button size="small" type="danger"
-                            @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
-                    </template>
-                </el-table-column>
-            </el-table>
-        </el-card>
-        <el-card>
             <h1>存储管理</h1>
             <el-table :data="folderList" style="width: 100%;height: 100%;" show-overflow-tooltip>
 
@@ -53,11 +32,12 @@
 
 <script setup lang="ts">
 import { onBeforeMount, reactive, ref, computed } from "vue";
-import { getUserList } from "../axios/userRequest";
-import { getAllUserFileListAPI } from "../axios/fileRequest";
-import { getAllUserFolderAPI } from "../axios/folderRequest";
+import { getUserList,userEdit } from "../../axios/userAPIList";
+import { getAllUserFileListAPI } from "../../axios/fileAPIList";
+import { getAllUserFolderAPI } from "../../axios/folderAPIList";
 let userList: any[] = reactive([]);
 const search = ref('')
+//过滤
 const filterTableData = computed(() =>
     userList.filter(
         (data) =>
@@ -87,6 +67,7 @@ interface User {
     usedStorage: string
     totalStorage: string
 }
+
 const handleEdit = (index: number, row: User) => {
   console.log(index, row)
 }
@@ -94,12 +75,6 @@ const handleDelete = (index: number, row: User) => {
   console.log(index, row)
 }
 onBeforeMount(async () => {
-    let data: any[] = await getUserList();
-    if (data != undefined) {
-        data = Object.values(data);
-        userList.push(...data)
-    }
-    console.log(userList);
 
 
        //初始化获取文件夹列表
@@ -149,8 +124,5 @@ h1{
 .el-card {
     width: 100%;
     min-height: 200px;
-}
-.el-card:last-child{
-    margin-top: 50px;
 }
 </style>
