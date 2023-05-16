@@ -9,7 +9,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    copy: typeof import('./src/components/FileDownload copy.vue')['default']
+    copy: typeof import('./src/components/ControllPanel/UserEditPanel copy.vue')['default']
     EditPane: typeof import('./src/components/EditPane.vue')['default']
     EditPanel: typeof import('./src/components/ControllPanel/EditPanel.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
@@ -49,6 +49,7 @@ declare module '@vue/runtime-core' {
     ElTabs: typeof import('element-plus/es')['ElTabs']
     ElText: typeof import('element-plus/es')['ElText']
     ElUpload: typeof import('element-plus/es')['ElUpload']
+    ElUploader: typeof import('element-plus/es')['ElUploader']
     File: typeof import('./src/components/File.vue')['default']
     FileDownload: typeof import('./src/components/FileDownload.vue')['default']
     FileDownloadPane: typeof import('./src/components/FileDownloadPane.vue')['default']
@@ -62,8 +63,10 @@ declare module '@vue/runtime-core' {
     Message: typeof import('./src/components/message/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    StorageEditPanel: typeof import('./src/components/ControllPanel/StorageEditPanel.vue')['default']
     StorageManagement: typeof import('./src/components/ControllPanel/StorageManagement.vue')['default']
     TaskQueue: typeof import('./src/components/TaskQueue.vue')['default']
+    UserEditPanel: typeof import('./src/components/ControllPanel/UserEditPanel.vue')['default']
     UserManagement: typeof import('./src/components/ControllPanel/UserManagement.vue')['default']
     UserStorageManagement: typeof import('./src/components/ControllPanel/UserStorageManagement.vue')['default']
   }

@@ -7,6 +7,7 @@
                 <el-table-column prop="username" label="用户名" width="100" />
                 <el-table-column prop="email" label="邮箱" width="180" />
                 <el-table-column prop="role" label="角色" width="100" />
+                <el-table-column prop="status" label="0==未冻结;1==冻结" width="100" />
                 <el-table-column prop="usedStorage" label="已用空间" width="180" />
                 <el-table-column prop="totalStorage" label="总空间" width="180" />
                 <el-table-column align="right" min-width="140" fixed="right">
@@ -15,21 +16,21 @@
                     </template>
                     <template #default="scope">
                         <el-button size="small" @click="handleUserEdit(scope.$index, scope.row)">编辑</el-button>
-                        <el-button size="small" type="danger"
-                            @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                        <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
         </el-card>
 
-        <EditPanel :userEditFormProps="userEditData" v-if="closePanel" @close-panel="handlerClosePanel" @result-User-Info="handlerResultUserInfo"></EditPanel>
+        <EditPanel :userEditFormProps="userEditData" v-if="closePanel" @close-panel="handlerClosePanel"
+            @result-User-Info="handlerResultUserInfo"></EditPanel>
     </div>
 </template>
 
 <script setup lang="ts">
 import { onBeforeMount, reactive, ref, computed } from "vue";
-import { getUserList,userEdit } from "../../axios/userAPIList";
-import EditPanel from './EditPanel.vue'
+import { getUserList, userDelete, userEdit } from "../../axios/userAPIList";
+import EditPanel from './UserEditPanel.vue'
 //用户数据
 let userList: any[] = reactive([]);
 const search = ref('')
@@ -51,21 +52,43 @@ interface User {
 }
 //用户编辑
 const closePanel = ref(false);
-const handlerClosePanel = (data:any)=>{
-    closePanel.value =!data;
+const handlerClosePanel = (data: any) => {
+    closePanel.value = !data;
 };
-const handlerResultUserInfo = (data:any)=>{
-    console.log(data);
-    
+//子组件返回数据
+const handlerResultUserInfo = (data: any) => {
+
 }
 let userEditData = ref()
-const handleUserEdit = (index:number,row:User)=>{
+const handleUserEdit = (index: number, row: User) => {
     userEditData.value = row
-    closePanel.value = true;    
-} 
+    closePanel.value = true;
+}
 
 const handleDelete = (index: number, row: User) => {
-  console.log(index, row)
+    console.log(row);
+
+    ElMessageBox.confirm(
+        '此操作不可逆,确认删除吗?',
+        '永久删除用户', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+    }).then(async () => {
+        let params: String = JSON.stringify({
+            userId: row.id
+        })
+        let data = await userDelete(params)
+        console.log(data);
+        
+
+    }).catch(() => {
+        ElMessage({
+            type: 'info',
+            message: '取消删除'
+        })
+
+    })
 }
 onBeforeMount(async () => {
     let data: any[] = await getUserList();
@@ -73,21 +96,25 @@ onBeforeMount(async () => {
         data = Object.values(data);
         userList.push(...data)
     }
+
 })
 </script>
 
 <style scoped>
-#user-management-wrap{
-    height: 100vh;
-    display:flex;
+#user-management-wrap {
+    /* 减去header60px和el-main的上下padding=40 */
+    min-height: calc(100vh - 100px);
+    display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
 }
-h1{
+
+h1 {
     margin-bottom: 15px;
     text-align: center;
 }
+
 .el-card {
     width: 100%;
     min-height: 200px;

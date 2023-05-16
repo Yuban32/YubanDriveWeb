@@ -5,9 +5,9 @@
       <el-aside width="240px">
         <div class="grid-content ep-bg-purple el-menu-wrap">
           <div class="app-title">
-            <h1>后台管理</h1>
+            <h1 @click="router.push('/')" title="返回首页" style="cursor: pointer; user-select: none">后台管理</h1>
           </div>
-          <el-menu default-active="/ControllPanel/UserManagement" class="el-menu" @select="handleSelect">
+          <el-menu :default-active="defaultActive" class="el-menu" @select="handleSelect">
             <el-menu-item index="/ControllPanel/UserManagement">
               <el-icon>
                 <Files />
@@ -32,10 +32,19 @@
                   :show-text="false" />
               </div>
               <div class="user-info-wrap">
-                <div class="user-info" @click="toUserPage">
+                <div class="user-info">
                   <img :src="userData?.avatar" alt="用户头像">
                   <span>{{ userData?.username }}</span>
-                  <el-icon><More  /></el-icon>
+                  <el-dropdown trigger="click" style="cursor: pointer;">
+                      <el-icon size="20px"><More /></el-icon>
+                      <template #dropdown>
+                        <el-dropdown-menu>
+                          <el-dropdown-item  @click="toUserPage">用户中心</el-dropdown-item>
+                          <el-dropdown-item v-if="userData.role == 'admin'"  @click="router.push('/ControllPanel/UserManagement')">后台系统</el-dropdown-item>
+                          <el-dropdown-item @click="handleLogout">退出登录</el-dropdown-item>
+                        </el-dropdown-menu>
+                      </template>
+                    </el-dropdown>
                 </div>
               </div>
             </div>
@@ -70,10 +79,10 @@ import { useDark } from '@vueuse/core';
 import { ref, onBeforeMount, computed, reactive, onMounted } from 'vue';
 import { useStore } from "vuex";
 import { key } from "../vuex/store";
-import { UserData, IUserData } from "../interface/Interface"
+import { UserData } from "../interface/Interface"
 import { useRoute, useRouter } from 'vue-router';
 import emitter from '../utils/eventBus';
-import { getUserInfo } from '../axios/userAPIList';
+import { getUserInfo,logout } from '../axios/userAPIList';
 
 //router
 const router = useRouter();
@@ -83,16 +92,33 @@ const title = ref();
 if(route.name == "UserManagement") title.value = "用户管理";
 if(route.name == "StorageManagement") title.value = "存储管理"
 
+//退出登录
+const handleLogout = ()=>{
+  ElMessageBox.confirm(
+    '确定要退出吗?',
+    '退出登录',
+    {
+      confirmButtonText:'确认',
+      cancelButtonText:'取消',
+      type:'warning'
+    }
+  ).then(()=>{
+    logout()
+  }).catch(()=>{
+    ElMessage({type:'info',message:'取消退出'})
+  })
+}
+
 //Menu菜单默认高亮页面
 const defaultActive = computed(()=>{return route.path})
-
+//跳转用户中心
 const toUserPage = ()=>{
   router.push({
     path:'/users'
   })
   title.value = "用户中心"
 }
-
+//菜单跳转
 const handleSelect = (key: string) => {
   if (key == "/ControllPanel/UserManagement") {
     router.push({
@@ -146,6 +172,8 @@ onBeforeMount(() => {
   }
   //初始化用户数据
   initUserData()
+  let data = localStorage.getItem("userData");
+  userData.value = data != null ? JSON.parse(data) : {};
 })
 </script>
 <style scoped>
@@ -238,7 +266,6 @@ onBeforeMount(() => {
   justify-content: center;
   align-items: center;
   font-size: 16px;
-  cursor: pointer;
   user-select: none;
 }
 

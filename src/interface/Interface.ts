@@ -1,22 +1,12 @@
 import { Ref } from "vue";
 
 export interface UserData{
-    id:number | any,
-    username:string | null,
-    email:string | null,
-    avatar:string | any,
-    usedStorage:number | any,
-    totalStorage:number | any,
-}
-
-export class IUserData implements UserData{
-    id:number = 0;
-    username:string = '';
-    email:string = '';
-    avatar:string = '';
-    usedStorage:number = 0;
-    totalStorage: number = 0;
-
+    id?:number | any,
+    username?:string | null,
+    email?:string | null,
+    avatar?:string | any,
+    usedStorage?:number | any,
+    totalStorage?:number | any,
 }
 
 export interface FileListDTO{
@@ -51,7 +41,7 @@ export interface FileDonwloadType{
     blobList:[],
     chunkList:[]
 }
-export interface UserEditDTO{
+export interface AdminUserEditDTO{
     id:number,
     userName:string,
     password:string,
@@ -60,4 +50,11 @@ export interface UserEditDTO{
     role:string,
     status:number,
     totalStorage:number
+}
+export interface UserEditDTO{
+    id:number,
+    userName:string,
+    password:string,
+    avatar:string,
+    email:string,
 }

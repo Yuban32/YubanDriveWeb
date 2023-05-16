@@ -39,7 +39,7 @@ export const removeFolderToRecycleAPI = async (currentFolderUUID:any) => {
     }).then((res:any)=>{return res.data}).catch((error:any)=>error)
     return data
 }
-
+//彻底删除文件
 export const trashAPI = async (fileUUID:string) =>{
     let data = await axios({
         url: "/recycle/trash",
@@ -51,7 +51,7 @@ export const trashAPI = async (fileUUID:string) =>{
     return data
 
 }
-
+//恢复文件
 export const restoreAPI = async (fileUUID:string,type:string) =>{
     let data = await axios({
         url: "/recycle/restore",

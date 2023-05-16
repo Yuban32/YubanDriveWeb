@@ -98,16 +98,14 @@ const loginSubmitForm = (formEl : FormInstance | undefined) =>{
                 password:ruleForm.password,
             });
             login(param).then((result:any) => {
-                console.log(result);
-                
                 let data = result.data;
                 let code = data.code;
                 let userData = data.data;
                 if(code == 500){
-                    ElMessage({
-                        message:data.msg,
-                        type:'warning'
-                    })
+                    // ElMessage({
+                    //     message:data.msg,
+                    //     type:'warning'
+                    // })
                     return
                 }else{
                     let authorization = result.headers['authorization'];
