@@ -9,6 +9,7 @@ const UserManagement = () => import("../components/ControllPanel/UserManagement.
 const StorageManagement = () => import("../components/ControllPanel/StorageManagement.vue");
 const NotFound = () => import("../views/NotFound.vue");
 const ControllPanel = () => import("../views/ControllPanel.vue");
+const NotAuthorization = () => import("../views/NotAuthorization.vue");
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
@@ -17,7 +18,6 @@ const router = createRouter({
       path: "/",
       component: Drive,
       meta: {
-        requireLogin: true,
         requireAdminAuthorization: false
       },
       children: [
@@ -26,7 +26,6 @@ const router = createRouter({
           path: "/folder",
           component: File,
           meta: {
-            requireLogin: true,
             requireAdminAuthorization: false,
           },
 
@@ -36,7 +35,6 @@ const router = createRouter({
           path: "/fileRecycle",
           component: FileRecycle,
           meta: {
-            requireLogin: true,
             requireAdminAuthorization: false,
           },
         },
@@ -45,7 +43,6 @@ const router = createRouter({
           path: "/users",
           component: User,
           meta: {
-            requireLogin: true,
             requireAdminAuthorization: false,
           },
         },
@@ -54,7 +51,6 @@ const router = createRouter({
           path: "/users/modify",
           component: ModifyUserInfo,
           meta: {
-            requireLogin: true,
             requireAdminAuthorization: false,
           },
         }
@@ -70,20 +66,18 @@ const router = createRouter({
       },
     },
     {
-      name:"ControllPanel",
-      path:"/ControllPanel",
-      component:ControllPanel,
+      name: "ControllPanel",
+      path: "/ControllPanel",
+      component: ControllPanel,
       meta: {
-        requireLogin: true,
         requireAdminAuthorization: true,
       },
-      children:[
+      children: [
         {
           name: "UserManagement",
           path: "/ControllPanel/UserManagement",
           component: UserManagement,
           meta: {
-            requireLogin: true,
             requireAdminAuthorization: true,
           },
         },
@@ -92,7 +86,6 @@ const router = createRouter({
           path: "/ControllPanel/StorageManagement",
           component: StorageManagement,
           meta: {
-            requireLogin: true,
             requireAdminAuthorization: true,
           },
         }
@@ -102,7 +95,19 @@ const router = createRouter({
     {
       name: "404",
       path: "/:catchAll(.*)",
-      component: NotFound
+      component: NotFound,
+      meta: {
+        requireAdminAuthorization: false,
+      },
+    },
+    //未授权页面
+    {
+      name: "NotAuthorization",
+      path: "/NotAuthorization",
+      component: NotAuthorization,
+      meta: {
+        requireAdminAuthorization: false,
+      },
     }
   ],
 });
@@ -112,8 +117,9 @@ router.beforeEach((to, from, next) => {
   //登录鉴别
   const isLoginRoute = to.name == 'Login'
   const jwt = localStorage.getItem("Authorization");
-
-
+  const requireAdminAuthorization = to.meta['requireAdminAuthorization']!
+  const userData = localStorage.getItem("userData")
+  //登录鉴权逻辑
   if (!isLoginRoute && !jwt) {
     next("/login");
   } else if (jwt) {
@@ -122,7 +128,6 @@ router.beforeEach((to, from, next) => {
     const decodePayload = JSON.parse(atob(payload));
     const now = Date.now() / 1000;
     if (decodePayload.exp >= now) {
-
       //打开页面的时候会访问到"/folder"路由 但不携带参数 所以就默认携带root参数
       if (to.path == "/folder" && (Object.keys(to.query).length === 0)) {
         next({
@@ -132,7 +137,29 @@ router.beforeEach((to, from, next) => {
           }
         });
       }
-      next();
+      //前端后台系统鉴权
+      if (requireAdminAuthorization) {
+        //需要管理员权限
+        if (userData) {
+          //userData 不为null时
+          const userDataJSON = JSON.parse(userData)
+          const role = userDataJSON.role
+          if (role == 'admin') {
+            //当前用户是否是管理员
+            //是就允许继续访问
+            next()
+          } else {
+            //不是则跳转到未授权页面
+            next('/NotAuthorization')
+          }
+        } else {
+          //userData为null时 判断为未登录 跳转到登录页面
+          next('/login')
+        }
+      } else {
+        //不需要管理员权限则直接放行
+        next()
+      }
     } else {
       //当jwt过期的时候 移除本地存储的jwt并且跳转到登录页面
       localStorage.removeItem("Authorization");

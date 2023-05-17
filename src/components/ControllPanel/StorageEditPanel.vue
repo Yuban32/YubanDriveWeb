@@ -45,8 +45,8 @@
 //import
 import { reactive, ref, onMounted } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
-import { userEdit } from '../../axios/userAPIList';
-import { UserEditDTO } from '../../interface/Interface';
+import { UserEdit } from '../../axios/userAPIList';
+import { AdminUserEditDTO } from '../../interface/Interface';
 //接口
 interface RuleFormPropsInterface {
   id?: number
@@ -134,13 +134,13 @@ const submitForm = (formEl: FormInstance | undefined) => {
           id: ruleForm.id,
           username: ruleForm.username,
           password: ruleForm.pwd,
-          avatar: (ruleForm as unknown as UserEditDTO).avatar,
-          email: (ruleForm as unknown as UserEditDTO).email,
+          avatar: (ruleForm as unknown as AdminUserEditDTO).avatar,
+          email: (ruleForm as unknown as AdminUserEditDTO).email,
           role: ruleForm.role,
-          status: (ruleForm as unknown as UserEditDTO).status,
-          totalStorage: (ruleForm as unknown as UserEditDTO).totalStorage
+          status: (ruleForm as unknown as AdminUserEditDTO).status,
+          totalStorage: (ruleForm as unknown as AdminUserEditDTO).totalStorage
         })
-        let result = await userEdit(data)
+        let result = await UserEdit(data)
         //修改成功后把回显数据返回到父组件
         emit("resultUserInfo", result.data)
         emit("closePanel", true)

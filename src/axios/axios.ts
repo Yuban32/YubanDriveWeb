@@ -1,4 +1,5 @@
 import aixos from "axios";
+import router from "../router";
 const config:Object = {
     baseURL:"http://localhost:5000",
     // withCredentials:true,
@@ -25,14 +26,15 @@ _axios.interceptors.request.use(
 _axios.interceptors.response.use(
     function (response:any){
         //后置拦截器
+        const CODE = response.data.code!
         if(response.config.url != "/user"){
-            if (response.data.code == 200) {
+            if (CODE == 200) {
                 ElMessage({
                     showClose: true,
                     message: response.data.msg,
                     type: 'success',
                 })
-            } else if (response.data.code == 500){
+            } else if (CODE == 500){
                 ElMessage({
                     showClose: true,
                     message:response.data.msg,
@@ -43,6 +45,23 @@ _axios.interceptors.response.use(
         return response;
     },
     function (error:any){
+        //捕捉错误
+        const ERROR_CODE = error.response.status;
+        if ( ERROR_CODE== 401){
+            ElMessage({
+                showClose:true,
+                message:error.response.data.msg,
+                type:'error'
+            })
+            router.push('/NotAuthorization')
+        }else if(ERROR_CODE == 400){
+            ElMessage({
+                showClose:true,
+                message:"请求的资源不存在",
+                type:'error'
+            })
+            router.push('/:catchAll(.*)')
+        }
         return Promise.reject(error);
     }
 )

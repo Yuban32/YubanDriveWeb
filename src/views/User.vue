@@ -61,10 +61,12 @@
 
             </el-card>
         </div>
+        <audio :src="audioSrc" ref="audio" controls></audio>
     </div>
 </template>
 
 <script setup lang="ts">
+//import
 import { onBeforeMount, ref, reactive, watch } from "vue";
 import { getUserInfo, UserEdit, logout } from "../axios/userAPIList";
 import { useStore } from "vuex";
@@ -73,6 +75,25 @@ import { useRouter } from "vue-router";
 import { FormRules, FormInstance } from "element-plus";
 import { UserEditDTO } from "../interface/Interface";
 import { Plus } from '@element-plus/icons-vue'
+import {mediaPlayerAPI} from '../axios/mediaAPIList'
+
+const audio = ref();
+const audioSrc = ref("http://localhost:5000/media/1b0bacd42bfd158c5981687256312c42")
+
+onBeforeMount(() => {
+    document.querySelector("audio")?.addEventListener('canplay',function(){
+    let xhr = new XMLHttpRequest();
+    xhr.open("GET",audio.value.currentSrc,true)
+    xhr.setRequestHeader("Authorization","Bearer"+localStorage.getItem("Authorization"))
+    xhr.onreadystatechange = ()=>{
+        if(xhr.readyState === XMLHttpRequest.DONE){
+            console.log(xhr.response);
+            
+        }
+    }
+    xhr.send()
+})
+})
 
 
 

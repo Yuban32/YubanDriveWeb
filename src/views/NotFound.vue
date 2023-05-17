@@ -2,11 +2,24 @@
     <div class="error-page">
         <h1>404</h1>
         <p>Not Found</p>
+        <p class="backward-text">{{ count }} 秒后返回上一页</p>
     </div>
 </template>
 
 <script setup lang="ts">
+import {  onMounted, ref } from 'vue';
+const time: number = 3
+const count = ref<number>(time)
+onMounted(() => {
+    setTimeout(() => {
+        // 导航到上一页
+        window.location.href = document.referrer
+    }, time * 1000)
 
+    setInterval(() => {
+        count.value--
+    }, 1000)
+})
 </script>
 
 <style scoped>
@@ -18,6 +31,10 @@
     text-align: center;
     height: 100vh;
     font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+}
+
+.backward-text {
+    font-size: 3vh;
 }
 
 h1 {
@@ -38,7 +55,7 @@ h1:after {
     color: transparent;
     /* webkit only for graceful degradation to IE */
     background: -webkit-repeating-linear-gradient(-45deg, #71b7e6, #69a6ce, #b98acc, #ee8176, #b98acc, #69a6ce, #9b59b6);
-    background-clip:text;
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-size: 400%;
@@ -67,6 +84,7 @@ p:after {
     -moz-background-clip: text;
     background-clip: text;
 }
+
 @keyframes animateTextBackground {
     0% {
         background-position: 0 0;
@@ -107,5 +125,10 @@ p:after {
         max-width: 70vw;
     }
 
-}
-</style>
+    .backward-text {
+        font-size: 5vw;
+        line-height: 10vw;
+        max-width: 70vw;
+    }
+
+}</style>

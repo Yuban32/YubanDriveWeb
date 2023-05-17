@@ -6,7 +6,7 @@ export const key: InjectionKey<Store<State>> = Symbol();
 export const store = createStore<State>({
     state:{
         jwtToken:"",
-        userData:{}
+        userData:{},
     },
     mutations:{
         setJwtToken(state:State,JwtToken:string){
@@ -18,7 +18,7 @@ export const store = createStore<State>({
             state.userData = userData;
             localStorage.setItem("userData",JSON.stringify(userData));
         }
-    },
+    }
 
 
 })

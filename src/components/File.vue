@@ -4,7 +4,7 @@
         <el-empty description="空目录" v-if="isEmpty" class="el-empty" />
         <el-row v-if="!isEmpty">
             <div v-for="( item ) in folderList" :key="item.fileUUID" class="el-card-wrap">
-                <el-card :body-style="{ padding: '5px' }" shadow="hover" @click="fileClickHandler(item, $event)">
+                <el-card :body-style="{ padding: '5px' }" shadow="hover" @click="handleFileClick(item, $event)">
                     <!-- @click.stop可以阻止dropdown的点击事件向上冒泡 -->
                     <div @click.stop>
                         <el-dropdown trigger="click" :prevent-hide="true">
@@ -33,6 +33,7 @@
                 </el-card>
             </div>
         </el-row>
+
     </div>
 </template>
 
@@ -207,7 +208,7 @@ const clickImage = (item: any, e: any) => {
 }
 
 //卡片点击事件
-const fileClickHandler = (item: FileListDTO, event: any) => {
+const handleFileClick = (item: FileListDTO, event: any) => {
     if (event.target != "svg") {
         let folderUUID: any = item.fileUUID;
         if (item.type == "folder") {

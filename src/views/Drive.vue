@@ -5,7 +5,8 @@
       <el-aside width="240px">
         <div class="grid-content ep-bg-purple el-menu-wrap">
           <div class="app-title">
-            <h1 @click="router.push('/folder?folderUUID=root')" title="返回首页" style="cursor: pointer; user-select: none;">Yuban Drive</h1>
+            <h1 @click="router.push('/folder?folderUUID=root')" title="返回首页" style="cursor: pointer; user-select: none;">
+              Yuban Drive</h1>
           </div>
           <el-menu :default-active="defaultActive" class="el-menu" @select="handleSelect">
             <el-menu-item index="/folder">
@@ -34,18 +35,20 @@
               <div class="user-info-wrap">
                 <div class="user-info">
                   <img :src="userData?.avatar" alt="用户头像">
-                  {{ userData?.role }}
                   <span>{{ userData?.username }}</span>
-                    <el-dropdown trigger="click" style="cursor: pointer;">
-                      <el-icon size="20px"><More /></el-icon>
-                      <template #dropdown>
-                        <el-dropdown-menu>
-                          <el-dropdown-item  @click="toUserPage">用户中心</el-dropdown-item>
-                          <el-dropdown-item v-if="userData.role == 'admin'"  @click="router.push('/ControllPanel/UserManagement')">后台系统</el-dropdown-item>
-                          <el-dropdown-item @click="handleLogout">退出登录</el-dropdown-item>
-                        </el-dropdown-menu>
-                      </template>
-                    </el-dropdown>
+                  <el-dropdown trigger="click" style="cursor: pointer;">
+                    <el-icon size="20px">
+                      <More />
+                    </el-icon>
+                    <template #dropdown>
+                      <el-dropdown-menu>
+                        <el-dropdown-item @click="toUserPage">用户中心</el-dropdown-item>
+                        <el-dropdown-item v-if="userData.role == 'admin'"
+                          @click="router.push('/ControllPanel/UserManagement')">后台系统</el-dropdown-item>
+                        <el-dropdown-item @click="handleLogout">退出登录</el-dropdown-item>
+                      </el-dropdown-menu>
+                    </template>
+                  </el-dropdown>
                 </div>
               </div>
             </div>
@@ -53,14 +56,10 @@
         </div>
       </el-aside>
       <el-container>
-        <el-header>
+        <el-header class="header">
           <div class="el-header-top">
             <h1>{{ title }}</h1>
-
           </div>
-          <el-breadcrumb separator="/">
-            <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
-          </el-breadcrumb>
         </el-header>
         <el-main>
           <router-view :key="$route.fullPath"></router-view>
@@ -76,7 +75,7 @@
 * import module 
 */
 import {
-  Files, Check, Close, Sunny, Moon, Delete, CirclePlus, More
+  Files, Sunny, Moon, Delete, More
 } from '@element-plus/icons-vue';
 import { useToggle } from '@vueuse/core';
 import { useDark } from '@vueuse/core';
@@ -85,26 +84,22 @@ import { useStore } from "vuex";
 import { key } from "../vuex/store";
 import { useRoute, useRouter } from 'vue-router';
 import emitter from '../utils/eventBus';
-import { getUserInfo,logout } from '../axios/userAPIList';
-
-//TODO 前端适配后端的鉴权，无权限 则返回无权限页面 最优先
-//TODO 完成面包屑导航 次优先
-//TODO 修复后台鉴权系统
+import { getUserInfo, logout } from '../axios/userAPIList';
 
 //退出登录
-const handleLogout = ()=>{
+const handleLogout = () => {
   ElMessageBox.confirm(
     '确定要退出吗?',
     '退出登录',
     {
-      confirmButtonText:'确认',
-      cancelButtonText:'取消',
-      type:'warning'
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'warning'
     }
-  ).then(()=>{
+  ).then(() => {
     logout()
-  }).catch(()=>{
-    ElMessage({type:'info',message:'取消退出'})
+  }).catch(() => {
+    ElMessage({ type: 'info', message: '取消退出' })
   })
 }
 
@@ -208,6 +203,9 @@ onBeforeMount(() => {
   display: flex;
   position: relative;
   box-sizing: border-box;
+}
+.el-main{
+  padding: 0 20px 20px 20px;
 }
 
 .el-header-top {
@@ -320,5 +318,6 @@ onBeforeMount(() => {
   border-radius: 15px;
   background: var(--el-menu-hover-bg-color);
 }
+
 </style>
   

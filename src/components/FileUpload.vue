@@ -18,7 +18,7 @@
                 </el-dropdown>
             </div>
             <div class="upload-task-wrap" v-if="taskIsEmpty"
-                :style="{ height: taskListIsClosed == true ? '500px' : '40px' ,bottom:0,cursor:'pointer'}">
+                :style="{ height: taskListIsClosed == true ? '500px' : '40px' ,bottom:0}">
                 <div class="header" @click="taskListIsClosed = !taskListIsClosed">
                     <el-icon size="30">
                         <UploadFilled />
@@ -33,7 +33,8 @@
                             <el-empty :description="'空队列'" v-if="!taskIsEmpty" class="el-empty" />
                             <div class="task-item" v-for="(item, index ) in uploadFileList" :key="index">
                                 <el-progress :percentage="item.parsePercentage" :show-text="false" :stroke-width="3"
-                                    class="el-progress-2" />
+                                    class="el-progress-2"
+                                    v-if="!(item.parsePercentage==100)" />
                                 <div class="image-wrap">
                                     <img :src="getAssetsFile('otherType.png')" class="image">
                                 </div>
@@ -360,6 +361,7 @@ const formatSize = (size: any) => {
     line-height: 30px;
     user-select: none;
     transition: background .3s ease;
+    cursor:pointer;
 }
 .header:hover{
     background-color: var(--el-border-color-hover);
