@@ -61,40 +61,98 @@
 
             </el-card>
         </div>
-        <audio :src="audioSrc" ref="audio" controls></audio>
+        <!-- 没时间写播放控件了 直接用vedio组件来搞 -->
+        <!-- <div class="audio-wrap">
+            <audio ref="audioEl" :src="audioSrc"></audio>
+            <div class="audio-btn-wrap">
+                <div class="audio-btn" @click="togglePlay">
+                    <el-icon v-if="isPlaying">
+                        <VideoPause />
+                    </el-icon>
+                    <el-icon v-else="!isPlaying">
+                        <VideoPlay />
+                    </el-icon>
+                </div>
+            </div>
+            <div class="audio-panel-wrap">
+                <div class="audio-panel-info-wrap">
+                    <div class="audio-panel-title">
+                        <p>标题</p>
+                        <p>歌手</p>
+                    </div>
+                    <div class="volume-wrap">
+                        
+                        <input type="range" v-model="audioVolume" @input="changeVolume">
+                    </div>
+
+                </div>
+                <div class="progress-wrap">
+                    <input type="range" v-model="audioProgress" @input="jumpTo">
+                </div>
+            </div>
+        </div> -->
     </div>
 </template>
 
 <script setup lang="ts">
 //import
-import { onBeforeMount, ref, reactive, watch } from "vue";
+import { onMounted, onBeforeMount, ref, reactive, watch } from "vue";
 import { getUserInfo, UserEdit, logout } from "../axios/userAPIList";
 import { useStore } from "vuex";
 import { key } from "../vuex/store"
 import { useRouter } from "vue-router";
 import { FormRules, FormInstance } from "element-plus";
 import { UserEditDTO } from "../interface/Interface";
-import { Plus } from '@element-plus/icons-vue'
-import {mediaPlayerAPI} from '../axios/mediaAPIList'
+import { Plus, VideoPause, VideoPlay } from '@element-plus/icons-vue'
+import { mediaPlayerAPI } from '../axios/mediaAPIList'
+import emitter from "../utils/eventBus";
 
-const audio = ref();
-const audioSrc = ref("http://localhost:5000/media/1b0bacd42bfd158c5981687256312c42")
+const audioEl = ref();
+const audioSrc = ref("http://localhost:5000/media/1cc782283a7ed1d1321eba270c60fcb3")
+const audioProgress = ref(0)
+const audioVolume = ref(30)
+const isPlaying = ref<boolean>(false)
+let intervalId: any = null;
+function changeVolume() {
+    audioEl.value.volume = audioVolume.value / 100;
+}
 
-onBeforeMount(() => {
-    document.querySelector("audio")?.addEventListener('canplay',function(){
-    let xhr = new XMLHttpRequest();
-    xhr.open("GET",audio.value.currentSrc,true)
-    xhr.setRequestHeader("Authorization","Bearer"+localStorage.getItem("Authorization"))
-    xhr.onreadystatechange = ()=>{
-        if(xhr.readyState === XMLHttpRequest.DONE){
-            console.log(xhr.response);
-            
-        }
+function updateProgress() {
+    const currentTime = audioEl.value.currentTime;
+    const duration = audioEl.value.duration;
+    audioProgress.value = (currentTime / duration) * 100;
+    if (currentTime >= duration) {  //音乐播放完毕时停止更新进度条
+        clearInterval(intervalId);
+        isPlaying.value = false;
     }
-    xhr.send()
-})
-})
+}
+function jumpTo() {
+    const duration = audioEl.value.duration;
+    const newValue = Math.floor(audioProgress.value);
+    audioEl.value.currentTime = (newValue * duration) / 100;
+}
+function togglePlay() {
+    if (isPlaying.value) {
+        audioEl.value.pause();
+        isPlaying.value = false;
+        clearInterval(intervalId);
+    } else {
+        audioEl.value.play();
+        isPlaying.value = true;
+        intervalId = setInterval(updateProgress, 30);
+    }
+}
+const test = () => {
+    let time = document.querySelector("audio")
+    console.dir(time!.currentTime += 10);
 
+}
+
+onMounted(() => {
+    document.querySelector("audio")!.addEventListener('timeupdate', updateProgress)
+    console.log(audioEl.value);
+
+})
 
 
 //用户数据
@@ -142,7 +200,7 @@ watch(userForm, (newValue, oldValue) => {
     }
 
 })
-
+const imageUrl = ref('')
 const submit = (formEl: FormInstance | undefined) => {
     if (!formEl) return
     formEl.validate((valid) => {
@@ -160,11 +218,12 @@ const submit = (formEl: FormInstance | undefined) => {
                     id: userInfo.value.id,
                     username: userForm.username == userInfo.value.username ? '' : userForm.username,
                     password: userForm.password,
-                    avatar: (userForm as unknown as UserEditDTO).avatar,
+                    avatar: imageUrl.value != "" ? imageUrl.value : (userForm as unknown as UserEditDTO).avatar,
                     email: (userForm as unknown as UserEditDTO).email
                 })
                 let result = await UserEdit(params)
                 userInfo.value = result.data
+                emitter.emit("reloadFileList")
                 if (userForm.password != "") {
                     logout()
                 }
@@ -174,7 +233,7 @@ const submit = (formEl: FormInstance | undefined) => {
 
 }
 //修改头像
-const imageUrl = ref('')
+
 const handleFileUpload = (e: InputEvent) => {
     const files = (e.target as HTMLInputElement | null)?.files;
     //判空
@@ -189,8 +248,6 @@ const handleFileUpload = (e: InputEvent) => {
                 reader.readAsDataURL(file)
                 reader.onload = () => {
                     imageUrl.value = reader.result as string
-                    console.log(imageUrl.value);
-
                 }
                 reader.onerror = () => {
                     console.error(reader.error);
@@ -218,6 +275,37 @@ onBeforeMount(() => {
 
 
 <style scoped>
+.audio-wrap {
+    height: 70px;
+    border: 1px solid red;
+    display: flex;
+}
+.audio-btn-wrap{
+    width: 70px;
+    height: 100%;
+}
+.audio-panel-wrap{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.audio-panel-info-wrap{
+    height: 100%;
+    display: flex;
+    flex: 1;
+}
+.audio-panel-title{
+    height: 100%;
+
+}
+.audio-panel-wrap p{
+    padding: 0;
+}
+.progress-wrap{
+    /* height: 100%; */
+    /* flex: 2; */
+}
+
 #user-center-wrap {
     height: 75vh;
     display: flex;

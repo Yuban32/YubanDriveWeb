@@ -22,6 +22,7 @@ export const logout = async () => {
     //退出成功的话,就清空本地的JWT Token并刷新页面
     if(data.code == 200){
         localStorage.removeItem("Authorization")
+        localStorage.removeItem("userData")
         location.reload()
     }
     return data

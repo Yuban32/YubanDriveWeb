@@ -29,7 +29,7 @@
 
 <script setup lang="ts">
 import { onBeforeMount, reactive, ref, computed } from "vue";
-import { getUserList, userDelete, userEdit } from "../../axios/userAPIList";
+import { getUserList, userDelete, UserEdit } from "../../axios/userAPIList";
 import EditPanel from './UserEditPanel.vue'
 //用户数据
 let userList: any[] = reactive([]);

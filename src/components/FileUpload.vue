@@ -83,7 +83,6 @@
 //import
 import { UploadFilled, Loading, Close, VideoPause, Refresh, CirclePlus } from '@element-plus/icons-vue';
 import SparkMD5 from "spark-md5";
-import { FileUploadType } from "../interface/Interface"
 import { uploadFileCheckAPI, uploadFileAPI } from "../axios/fileAPIList"
 import { createFolderAPI } from "../axios/folderAPIList"
 import { onMounted, ref } from 'vue';

@@ -7,10 +7,10 @@ interface checkFile{
 /**
  * 文件API
  */
-
+//获取文件和文件夹列表
 export const getFileListAPI = async(param:String) =>{
     let data = await axios({
-        url: "/fileDownload/fileList",
+        url: "/fileList",
         method: "GET",
         params: {
             parentFolderUUID: param

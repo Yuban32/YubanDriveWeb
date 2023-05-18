@@ -14,3 +14,8 @@ interface ImportMeta{
     readonly env: ImportMetaEnv;
 }
 declare module "spark-md5"
+declare module 'vue3-video-play' {
+    import { ComponentOptions } from 'vue'
+    const content: ComponentOptions
+    export default content
+  }

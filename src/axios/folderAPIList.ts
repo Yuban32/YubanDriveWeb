@@ -3,16 +3,6 @@ import axios from "./axios"
 /**
  * 文件夹API
  */
-export const getFolderListAPI = async (param: String) => {
-    let data = await axios({
-        url: "/folder/list",
-        method: "GET",
-        params: {
-            parentFolderUUID: param
-        }
-    }).then((res:any)=>{return res.data.data}).catch((error:any)=>error)
-    return data
-}
 export const addFolderToRecycleAPI = async (folderUUID:any)=>{
     let data = await axios({
         url: "/folder/recycle",
