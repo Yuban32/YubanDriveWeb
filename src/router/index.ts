@@ -83,14 +83,14 @@ const router = createRouter({
       ]
     },
     //404页面
-    // {
-    //   name: "404",
-    //   path: "/:catchAll(.*)",
-    //   component: NotFound,
-    //   meta: {
-    //     requireAdminAuthorization: false,
-    //   },
-    // },
+    {
+      name: "404",
+      path: "/:catchAll(.*)",
+      component: NotFound,
+      meta: {
+        requireAdminAuthorization: false,
+      },
+    },
     //未授权页面
     {
       name: "NotAuthorization",
