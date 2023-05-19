@@ -4,7 +4,6 @@ const Drive = () => import("../views/Drive.vue");
 const File = () => import("../components/File.vue");
 const FileRecycle = () => import("../components/FileRecycle.vue");
 const User = () => import("../views/User.vue");
-const ModifyUserInfo = () => import("../views/ModifyUserInfo.vue");
 const UserManagement = () => import("../components/ControllPanel/UserManagement.vue");
 const StorageManagement = () => import("../components/ControllPanel/StorageManagement.vue");
 const NotFound = () => import("../views/NotFound.vue");
@@ -46,14 +45,6 @@ const router = createRouter({
             requireAdminAuthorization: false,
           },
         },
-        {
-          name: "ModifyUserInfo",
-          path: "/users/modify",
-          component: ModifyUserInfo,
-          meta: {
-            requireAdminAuthorization: false,
-          },
-        }
       ]
     },
     {
@@ -92,14 +83,14 @@ const router = createRouter({
       ]
     },
     //404页面
-    {
-      name: "404",
-      path: "/:catchAll(.*)",
-      component: NotFound,
-      meta: {
-        requireAdminAuthorization: false,
-      },
-    },
+    // {
+    //   name: "404",
+    //   path: "/:catchAll(.*)",
+    //   component: NotFound,
+    //   meta: {
+    //     requireAdminAuthorization: false,
+    //   },
+    // },
     //未授权页面
     {
       name: "NotAuthorization",

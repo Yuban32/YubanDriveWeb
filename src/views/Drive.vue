@@ -162,7 +162,7 @@ const initUserData = async () => {
 }
 //文件上传后需要再更新一次用户数据
 //因为需要更新用户存储配额信息
-emitter.on("reloadFileList", () => {
+emitter.on("reloadUserInfo", () => {
   initUserData();
 })
 //DOM渲染前初始化数据

@@ -13,13 +13,6 @@ export const addFolderToRecycleAPI = async (folderUUID:any)=>{
     }).then((res:any)=>{return res.data.data}).catch((error:any)=>error)
     return data
 }
-export const getAllUserFolderAPI = async () => {
-    let data = await axios({
-        url: "/folderManagement/list",
-        method: "GET",
-    }).then((res:any)=>{return res.data.data}).catch((error:any)=>error)
-    return data
-}
 export const createFolderAPI = async (folderUUID:any,folderName:any) =>{
     let data = await axios({
         url:"/folder/create",

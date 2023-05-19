@@ -44,7 +44,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
-import { AdminUserEdit } from '../../axios/userAPIList';
+import { AdminUserEdit } from '../../axios/adminManagement';
 import { AdminUserEditDTO } from '../../interface/Interface';
 //接口
 interface RuleFormPropsInterface {

@@ -46,38 +46,7 @@ export const getUserInfo = async () => {
     }).then((res: any) => { return res.data.data }).catch((error: any) => error)
     return data;
 }
-//管理员获取用户列表
-export const getUserList = async () => {
-    let data = await axios({
-        url: "/userManagement/userList",
-        method: "GET",
-    }).then((res: any) => { return res.data.data }).catch((error: any) => error)
-    return data
-}
-//管理员获取用户列表
-export const AdminUserEdit = async (params: String) => {
-    let data = await axios({
-        url: "/userManagement/edit",
-        method: "POST",
-        data: params,
-        headers: {
-            "Content-Type": "application/json"
-        }
-    }).then((res: any) => { return res.data }).catch((error: any) => error)
-    return data;
-}
-//管理员删除用户
-export const userDelete = async (params: String) => {
-    let data = await axios({
-        url: "/userManagement/delete",
-        method: "POST",
-        data: params,
-        headers: {
-            "Content-Type": "application/json"
-        }
-    }).then((res: any) => { return res.data }).catch((error: any) => error)
-    return data;
-}
+
 //用户编辑信息
 export const UserEdit = async (params: String) => {
     let data = await axios({

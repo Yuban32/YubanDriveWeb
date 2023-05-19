@@ -187,8 +187,11 @@ const recycle = (item: any) => {
             } else if (item.type == "folder") {
                 //执行对文件夹的删除
                 let data = await removeFolderToRecycleAPI(item.fileUUID);
+                //状态码==200则删除成功
                 if (data.code == 200) {
+                    //使用findIndex来查找被删除的 找不到返回-1
                     const index = fileList.findIndex((items) => items.fileUUID == item.fileUUID);
+                    //找到了就返回元素的下标 并用splice来删除 1==删除一个 0==删除全部
                     if (index >= 0) {
                         fileList.splice(index, 1);
                     }

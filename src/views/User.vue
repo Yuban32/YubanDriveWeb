@@ -61,99 +61,20 @@
 
             </el-card>
         </div>
-        <!-- 没时间写播放控件了 直接用vedio组件来搞 -->
-        <!-- <div class="audio-wrap">
-            <audio ref="audioEl" :src="audioSrc"></audio>
-            <div class="audio-btn-wrap">
-                <div class="audio-btn" @click="togglePlay">
-                    <el-icon v-if="isPlaying">
-                        <VideoPause />
-                    </el-icon>
-                    <el-icon v-else="!isPlaying">
-                        <VideoPlay />
-                    </el-icon>
-                </div>
-            </div>
-            <div class="audio-panel-wrap">
-                <div class="audio-panel-info-wrap">
-                    <div class="audio-panel-title">
-                        <p>标题</p>
-                        <p>歌手</p>
-                    </div>
-                    <div class="volume-wrap">
-                        
-                        <input type="range" v-model="audioVolume" @input="changeVolume">
-                    </div>
-
-                </div>
-                <div class="progress-wrap">
-                    <input type="range" v-model="audioProgress" @input="jumpTo">
-                </div>
-            </div>
-        </div> -->
     </div>
 </template>
 
 <script setup lang="ts">
 //import
-import { onMounted, onBeforeMount, ref, reactive, watch } from "vue";
+import {  onBeforeMount, ref, reactive, watch } from "vue";
 import { getUserInfo, UserEdit, logout } from "../axios/userAPIList";
 import { useStore } from "vuex";
 import { key } from "../vuex/store"
 import { useRouter } from "vue-router";
 import { FormRules, FormInstance } from "element-plus";
 import { UserEditDTO } from "../interface/Interface";
-import { Plus, VideoPause, VideoPlay } from '@element-plus/icons-vue'
-import { mediaPlayerAPI } from '../axios/mediaAPIList'
+import { Plus} from '@element-plus/icons-vue'
 import emitter from "../utils/eventBus";
-
-const audioEl = ref();
-const audioSrc = ref("http://localhost:5000/media/1cc782283a7ed1d1321eba270c60fcb3")
-const audioProgress = ref(0)
-const audioVolume = ref(30)
-const isPlaying = ref<boolean>(false)
-let intervalId: any = null;
-function changeVolume() {
-    audioEl.value.volume = audioVolume.value / 100;
-}
-
-function updateProgress() {
-    const currentTime = audioEl.value.currentTime;
-    const duration = audioEl.value.duration;
-    audioProgress.value = (currentTime / duration) * 100;
-    if (currentTime >= duration) {  //音乐播放完毕时停止更新进度条
-        clearInterval(intervalId);
-        isPlaying.value = false;
-    }
-}
-function jumpTo() {
-    const duration = audioEl.value.duration;
-    const newValue = Math.floor(audioProgress.value);
-    audioEl.value.currentTime = (newValue * duration) / 100;
-}
-function togglePlay() {
-    if (isPlaying.value) {
-        audioEl.value.pause();
-        isPlaying.value = false;
-        clearInterval(intervalId);
-    } else {
-        audioEl.value.play();
-        isPlaying.value = true;
-        intervalId = setInterval(updateProgress, 30);
-    }
-}
-const test = () => {
-    let time = document.querySelector("audio")
-    console.dir(time!.currentTime += 10);
-
-}
-
-onMounted(() => {
-    document.querySelector("audio")!.addEventListener('timeupdate', updateProgress)
-    console.log(audioEl.value);
-
-})
-
 
 //用户数据
 const router = useRouter();
@@ -218,12 +139,12 @@ const submit = (formEl: FormInstance | undefined) => {
                     id: userInfo.value.id,
                     username: userForm.username == userInfo.value.username ? '' : userForm.username,
                     password: userForm.password,
-                    avatar: imageUrl.value != "" ? imageUrl.value : (userForm as unknown as UserEditDTO).avatar,
+                    avatar: imageUrl.value,
                     email: (userForm as unknown as UserEditDTO).email
                 })
                 let result = await UserEdit(params)
                 userInfo.value = result.data
-                emitter.emit("reloadFileList")
+                emitter.emit("reloadUserInfo")
                 if (userForm.password != "") {
                     logout()
                 }

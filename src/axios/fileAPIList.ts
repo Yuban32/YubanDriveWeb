@@ -18,14 +18,6 @@ export const getFileListAPI = async(param:String) =>{
     }).then((res:any)=>{return res.data.data}).catch((error:any)=>error)
     return data
 }
-export const getRecycleFileListAPI = async() =>{
-    let data = await axios({
-        url: "/fileDownload/recycle",
-        method: "GET",
-    }).then((res:any)=>{return res.data.data}).catch((error:any)=>error)
-    return data
-}
-
 export const uploadFileAPI = async(param:FormData) =>{
     return await axios({
         url:"/fileUpload/chunk",
@@ -45,17 +37,6 @@ export const uploadFileCheckAPI = async(param:checkFile) =>{
     }).then((res:any)=>{return res.data}).catch((error:any)=>error)
     return data;
 }
-
-//文件管理
-
-export const getAllUserFileListAPI = async() =>{
-    let data = await axios({
-        url: "/fileManagement/list",
-        method: "GET",
-    }).then((res:any)=>{return res.data.data}).catch((error:any)=>error)
-    return data
-}
-
 export const renameFileAPI = async (newFileName:string,currentFileName:object,folderUUID:string) =>{
     let data = await axios({
         url:"/fileManagement/rename",
