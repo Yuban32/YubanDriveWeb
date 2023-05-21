@@ -7,6 +7,7 @@ import App from './App.vue'
 import {store,key} from './vuex/store';
 import ElementPlus from "element-plus";
 import router from "./router/index"
+import checkServersStatusAPI from './axios/checkServersStatusAPI';
 
 const vueApp = createApp(App);
 
@@ -14,6 +15,10 @@ vueApp.use(store,key);
 vueApp.use(ElementPlus);
 vueApp.use(router);
 vueApp.mount('#app');
+checkServersStatusAPI().catch(err=>{
+    ElMessage({type:'error',message:'后端维护中...'})
+    router.push("/:catchAll(.*)")
+})
 
 //打印Banner
 console.log('\u001b[34m\u001b[0m\n\u001b[34m%s\u001b[0m',`

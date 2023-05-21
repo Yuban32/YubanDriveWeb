@@ -11,8 +11,12 @@ const _axios:any = aixos.create(config);
 _axios.interceptors.request.use(
     function (request:any){
         let user = localStorage.getItem("Authorization");
+        //判断JWT是否为空
         if(user){
-            request.headers["Authorization"] = user;
+            //非登录接口 都要带上JWT TOKEN
+            if(request.url!="/user/login"){
+                request.headers["Authorization"] = user;
+            }
         }
         //前置拦截器
         

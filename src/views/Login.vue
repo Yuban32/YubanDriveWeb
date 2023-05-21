@@ -31,7 +31,7 @@
                             <el-input v-model="ruleForm.password" type="password" autocomplete="off" />
                         </el-form-item>
                         <el-form-item label="确认密码" prop="checkPassword">
-                            <el-input v-model="ruleForm.checkPassword" type="password" autocomplete="off" />
+                            <el-input v-model="ruleForm.checkPassword" type="password" autocomplete="off" @keyup.enter.native="registerSubmitForm(registerRuleFormRef)" />
                         </el-form-item>
                         <el-form-item>
                             <el-button type="primary" @click="registerSubmitForm(registerRuleFormRef)">提交</el-button>
@@ -138,18 +138,6 @@ const registerSubmitForm = (formEl: FormInstance | undefined) => {
                 email:ruleForm.email
             });
             register(param).then((result:any) => {
-                let data = result.data;
-                let code = data.code;
-                let msgType:any = '';
-                if(code == 500){
-                    msgType = 'warning'
-                }else{
-                    msgType = 'success'
-                }
-                    ElMessage({
-                        message:data.msg,
-                        type:msgType
-                    })
                     
             }).catch((err:any) => {
                 

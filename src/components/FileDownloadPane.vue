@@ -107,13 +107,13 @@ const downloadChunk = async (index: any, file: any) => {
                     formData.set("chunkSize", chunkSize);
                 }
                 let startTime = new Date().valueOf();
-                console.log(formData);
+                // console.log(formData);
                 let data = await fileDownloadAPI(formData);
                 let endTime = new Date().valueOf();
                 let timeDif = (endTime - startTime) / 1000;
                 file.downloadSpeed = (5 / timeDif).toFixed(1) + "M/s";
                 file.downloadPersentage = Math.floor((index / chunkTotal) * 100);
-
+                file.chunkList.push(index);
                 const blob = data;
                 file.blobList.push(blob);
                 if (index == chunkTotal) {

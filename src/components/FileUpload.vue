@@ -212,6 +212,7 @@ const beforeUpload = async (file: any) => {
                 message: "文件已秒传",
                 type: "warning"
             });
+            emitter.emit("reloadFileList");
         }
     }
 
