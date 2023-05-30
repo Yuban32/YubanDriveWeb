@@ -1,7 +1,7 @@
 # YubanDriveWeb
 
 Yuban Drive Web 鱼板云盘Web端
-后端 https://github.com/Mashiro10032/YubanDriveWeb
+后端 https://github.com/Mashiro10032/YubanDriveJava
 
 用户相关功能
 
