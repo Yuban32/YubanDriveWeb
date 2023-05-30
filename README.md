@@ -1,6 +1,6 @@
-# YubanDriveWeb
+# YubanDriveWeb 毕设项目
 
-Yuban Drive Web 鱼板云盘Web端 毕设项目
+Yuban Drive Web 鱼板云盘Web端
 后端 https://github.com/Mashiro10032/YubanDriveJava
 
 用户相关功能
